@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HomeStock Express</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f0f8ff;
+        }
+        header {
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .product {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px;
+            background: white;
+            border-radius: 8px;
+            display: inline-block;
+            width: 200px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #cart {
+            background: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            border: 2px solid #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🏠 HomeStock Express</h1>
+        <p>Household Items Delivered to Your Door</p>
+    </header>
+
+    <div style="padding: 20px;">
+        <h2>Shop Now:</h2>
+        
+        <div class="product">
+            <h3>📦 Paper Towels</h3>
+            <p>Soft and absorbent</p>
+            <p><strong>$12.99</strong></p>
+            <button onclick="addToCart('Paper Towels', 12.99)">Add to Cart</button>
+        </div>
+        
+        <div class="product">
+            <h3>🧼 Dish Soap</h3>
+            <p>Lemon scent</p>
+            <p><strong>$5.99</strong></p>
+            <button onclick="addToCart('Dish Soap', 5.99)">Add to Cart</button>
+        </div>
+        
+        <div class="product">
+            <h3>🗑️ Trash Bags</h3>
+            <p>Heavy duty</p>
+            <p><strong>$8.99</strong></p>
+            <button onclick="addToCart('Trash Bags', 8.99)">Add to Cart</button>
+        </div>
+        
+        <div id="cart">
+            <h2>🛒 Your Cart</h2>
+            <ul id="cart-items"></ul>
+            <p>Total: $<span id="total">0.00</span></p>
+            <button onclick="checkout()">Schedule Delivery</button>
+        </div>
+    </div>
+
+        <footer style="text-align: center; padding: 20px; background: #f1f5f9;">
+        <p>© 2024 HomeStock Express | All prices in USD | All sales final</p>
+    </footer>
+
+    <script>
+        let cart = [];
+        let total = 0;
+
+        function addToCart(name, price) {
+            cart.push({name, price});
+            total += price;
+            updateCart();
+            alert('Added to cart: ' + name);
+        }
+
+        function updateCart() {
+            const itemsList = document.getElementById('cart-items');
+            itemsList.innerHTML = '';
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.name + ' - $' + item.price.toFixed(2);
+                itemsList.appendChild(li);
+            });
+            document.getElementById('total').textContent = total.toFixed(2);
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Cart is empty!');
+                return;
+            }
+            
+            const address = prompt('Enter delivery address:');
+            const date = prompt('Enter delivery date (e.g., Dec 25):');
+            const time = prompt('Enter time (e.g., 2-4 PM):');
+            
+            if (address && date && time) {
+                alert('✅ Order Confirmed!\n\nDelivering to: ' + address + 
+                      '\nOn: ' + date + ' at ' + time + 
+                      '\nTotal: $' + total.toFixed(2));
+                cart = [];
+                total = 0;
+                updateCart();
+            }
+        }
+    </script>
+</body>
+</html>
