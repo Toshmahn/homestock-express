@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout - HomeStock Express</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .payment-box {
+            border: 2px solid #2563eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: #f0f7ff;
+        }
+        button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Checkout - HomeStock Express</h1>
+        
+        <!-- Order Summary -->
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3>Your Order:</h3>
+            <div id="order-items"></div>
+            <p><strong>Total: $<span id="order-total">0.00</span></strong></p>
+        </div>
+        
+        <!-- Payment Options -->
+        <h2>💳 Choose Payment Method</h2>
+        
+        <div class="payment-box">
+            <h3>📱 MPesa</h3>
+            <p>Send payment to: <strong>0712 345 678</strong></p>
+            <p>Business Name: <strong>HomeStock Express</strong></p>
+            <p>Include your name in the reference</p>
+        </div>
+        
+        <div class="payment-box">
+            <h3>📱 Airtel Money</h3>
+            <p>Send payment to: <strong>0733 456 789</strong></p>
+            <p>Business Name: <strong>HomeStock Express</strong></p>
+            <p>Include your name in the reference</p>
+        </div>
+        
+        <div class="payment-box">
+            <h3>💳 PayPal</h3>
+            <p>Send to: <strong>paypal.me/homestockexpress</strong></p>
+            <p>Include your order details</p>
+        </div>
+        
+        <!-- Delivery Form -->
+        <h2>🚚 Delivery Details</h2>
+        
+        <label>Your Name:</label>
+        <input type="text" id="customer-name" placeholder="Enter your full name">
+        
+        <label>Phone Number:</label>
+        <input type="tel" id="customer-phone" placeholder="0712 345 678">
+        
+        <label>Delivery Address:</label>
+        <textarea id="customer-address" placeholder="Enter full address" rows="3"></textarea>
+        
+        <label>Delivery Date:</label>
+        <input type="date" id="delivery-date">
+        
+        <label>Preferred Time:</label>
+        <select id="delivery-time">
+            <option>9 AM - 12 PM</option>
+            <option>12 PM - 3 PM</option>
+            <option>3 PM - 6 PM</option>
+            <option>6 PM - 9 PM</option>
+        </select>
+        
+        <!-- Complete Order Button -->
+        <button onclick="placeOrder()">✅ Place Order</button>
+        
+        <p style="text-align: center; margin-top: 20px;">
+            <a href="index.html">← Back to Shopping</a>
+        </p>
+    </div>
+
+    <script>
+        // Show what's in the cart
+        document.addEventListener('DOMContentLoaded', function() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const total = localStorage.getItem('total') || '0.00';
+            
+            const itemsDiv = document.getElementById('order-items');
+            const totalSpan = document.getElementById('order-total');
+            
+            // Show items
+            cart.forEach(item => {
+                const p = document.createElement('p');
+                p.textContent = `${item.name} - $${item.price}`;
+                itemsDiv.appendChild(p);
+            });
+            
+            // Show total
+            totalSpan.textContent = total;
+            
+            // Set today as minimum date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('delivery-date').min = today;
+        });
+        
+        function placeOrder() {
+            // Get form values
+            const name = document.getElementById('customer-name').value;
+            const phone = document.getElementById('customer-phone').value;
+            const address = document.getElementById('customer-address').value;
+            const date = document.getElementById('delivery-date').value;
+            const time = document.getElementById('delivery-time').value;
+            
+            // Get cart info
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const total = localStorage.getItem('total') || '0.00';
+            
+            // Check if everything is filled
+            if (!name || !phone || !address || !date) {
+                alert('Please fill in all fields!');
+                return;
+            }
+            
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            // Create order summary
+            const orderNumber = 'HS' + Date.now().toString().slice(-6);
+            const orderDetails = 
+               const orderDetails = 
+    '🛑 IMPORTANT: PAYMENT BEFORE DELIVERY 🛑\n\n' +
+    
+    '📦 YOUR ORDER #: ' + orderNumber + '\n' +
+    '👤 Name: ' + name + '\n' +
+    '📱 Phone: ' + phone + '\n\n' +
+    
+    '🛒 ITEMS ORDERED:\n' + cart.map(item => '• ' + item.name + ' ($' + item.price + ')').join('\n') + '\n\n' +
+    
+    '💰 TOTAL TO PAY: $' + total + '\n\n' +
+    
+    '📍 DELIVERY ADDRESS:\n' + address + '\n' +
+    '📅 Delivery Date: ' + date + '\n' +
+    '⏰ Time Window: ' + time + '\n\n' +
+    
+    '💳 ======= PAYMENT REQUIRED FIRST =======\n' +
+    'SEND PAYMENT TO ONE OF THESE:\n\n' +
+    '1. MPESA: 0712 345 678\n' +
+    '2. AIRTEL MONEY: 0733 456 789\n' +
+    '3. PAYPAL: paypal.me/homestockexpress\n\n' +
+    
+    '📝 INCLUDE THIS IN REFERENCE: "' + orderNumber + '"\n\n' +
+    
+    '⏳ WHAT HAPPENS NEXT:\n' +
+    '1. YOU send payment (NOW)\n' +
+    '2. WE confirm payment on our phone\n' +
+    '3. WE SMS you: "Payment confirmed!"\n' +
+    '4. WE prepare your order\n' +
+    '5. WE deliver on scheduled date\n\n' +
+    
+    '🚫 NO PAYMENT = NO DELIVERY\n' +
+    '✅ PAYMENT FIRST = DELIVERY AS SCHEDULED\n\n' +
+    
+    '📞 Questions? Call: [YOUR PHONE NUMBER]';
+            // Show confirmation
+            alert(orderDetails);
+            
+            // Clear cart
+            localStorage.removeItem('cart');
+            localStorage.removeItem('total');
+            
+            // Redirect to home after 5 seconds
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

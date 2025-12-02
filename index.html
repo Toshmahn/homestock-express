@@ -75,7 +75,7 @@
             <h2>🛒 Your Cart</h2>
             <ul id="cart-items"></ul>
             <p>Total: $<span id="total">0.00</span></p>
-            <button onclick="checkout()">Schedule Delivery</button>
+            <button onclick="goToCheckout()">Proceed to Checkout</button>
         </div>
     </div>
 
@@ -106,9 +106,19 @@
         }
 
         function checkout() {
-            if (cart.length === 0) {
-                alert('Cart is empty!');
-                return;
+           function goToCheckout() {
+    if (cart.length === 0) {
+        alert('Cart is empty! Add items first!');
+        return;
+    }
+    
+    // Save cart to browser memory
+    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem('total', total.toFixed(2));
+    
+    // Go to checkout page
+    window.location.href = 'checkout.html';
+}
             }
             
             const address = prompt('Enter delivery address:');
