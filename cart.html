@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - HomeStock Express</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Same CSS as before */
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-boxes"></i>
+                <span>HomeStock Express</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#products">Products</a></li>
+                    <li><a href="cart.html" class="active">My Cart</a></li>
+                    <li><a href="admin.html">Admin</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="cart-page container">
+        <h1 style="color: var(--primary); margin-bottom: 40px;">
+            <i class="fas fa-shopping-cart"></i> Your Shopping Cart
+        </h1>
+        
+        <div id="cartContainer">
+            <!-- Cart items will be loaded here -->
+        </div>
+        
+        <div id="emptyCart" class="empty-cart" style="display: none;">
+            <i class="fas fa-shopping-cart" style="font-size: 4rem; color: var(--border); margin-bottom: 20px;"></i>
+            <h2>Your cart is empty</h2>
+            <p style="color: var(--gray); margin: 20px 0 40px;">Add some products to your cart first!</p>
+            <a href="index.html#products" class="btn" style="background: var(--primary); color: white; padding: 15px 40px;">
+                <i class="fas fa-shopping-bag"></i> Continue Shopping
+            </a>
+        </div>
+    </section>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Helper function to format Kenyan Shillings
+        function formatKES(amount) {
+            return `KSh ${amount.toLocaleString('en-KE')}`;
+        }
+        
+        function displayCart() {
+            const cartContainer = document.getElementById('cartContainer');
+            const emptyCart = document.getElementById('emptyCart');
+            
+            if (cart.length === 0) {
+                cartContainer.style.display = 'none';
+                emptyCart.style.display = 'block';
+                return;
+            }
+            
+            let total = 0;
+            let cartHTML = `
+                <div class="cart-items">
+                    <h3 style="margin-bottom: 30px;">
+                        <i class="fas fa-box"></i> Your Items (${cart.length})
+                        <span style="float: right; font-size: 0.9rem; color: var(--gray);">
+                            <i class="fas fa-money-bill-wave"></i> All prices in Kenyan Shillings
+                        </span>
+                    </h3>
+            `;
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                cartHTML += `
+                    <div class="cart-item">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div style="width: 80px; height: 80px; background: #f8f8f8; border-radius: 8px; background-image: url('${item.image}'); background-size: cover;"></div>
+                            <div>
+                                <h4>${item.name}</h4>
+                                <p style="color: var(--gray);">${formatKES(item.price)} each</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <button onclick="updateQuantity(${index}, ${item.quantity - 1})" style="background: var(--border); border: none; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;">-</button>
+                                <span style="font-weight: bold;">${item.quantity}</span>
+                                <button onclick="updateQuantity(${index}, ${item.quantity + 1})" style="background: var(--border); border: none; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;">+</button>
+                            </div>
+                            <div style="text-align: right;">
+                                <h4 style="color: var(--primary);">${formatKES(itemTotal)}</h4>
+                                <button onclick="removeItem(${index})" style="background: none; border: none; color: #ff4444; cursor: pointer; font-size: 0.9rem;">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Calculate delivery (free over KSh 3000)
+            const deliveryFee = total >= 3000 ? 0 : 200;
+            const grandTotal = total + deliveryFee;
+            
+            cartHTML += `
+                </div>
+                <div class="cart-summary">
+                    <h3 style="margin-bottom: 20px;">
+                        <i class="fas fa-receipt"></i> Order Summary (KES)
+                    </h3>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Subtotal</span>
+                        <span>${formatKES(total)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Delivery Fee</span>
+                        <span>${deliveryFee === 0 ? 'FREE' : formatKES(deliveryFee)}</span>
+                    </div>
+                    ${total < 3000 ? `
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #ffc107;">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Spend KSh ${(3000 - total).toLocaleString('en-KE')} more for FREE delivery!</strong>
+                    </div>
+                    ` : `
+                    <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin: 15px 0; border-left: 4px solid var(--primary);">
+                        <i class="fas fa-check-circle"></i> 
+                        <strong>You qualify for FREE delivery!</strong>
+                    </div>
+                    `}
+                    <div style="display: flex; justify-content: space-between; margin: 20px 0; padding: 20px 0; border-top: 2px solid var(--border); border-bottom: 2px solid var(--border); font-size: 1.2rem; font-weight: bold;">
+                        <span>Total Amount</span>
+                        <span style="color: var(--primary);">${formatKES(grandTotal)}</span>
+                    </div>
+                    
+                    <a href="checkout.html" class="btn btn-primary">
+                        <i class="fas fa-lock"></i> Proceed to Checkout (KES ${grandTotal.toLocaleString('en-KE')})
+                    </a>
+                    
+                    <div style="margin-top: 30px; padding: 20px; background: var(--light); border-radius: 8px;">
+                        <h4><i class="fas fa-info-circle"></i> Payment Information (Kenyan Shillings Only)</h4>
+                        <p style="margin-top: 10px; color: var(--gray);">
+                            Send payment to:<br>
+                            <strong><i class="fab fa-m-pesa"></i> M-Pesa:</strong> 0712 345 678<br>
+                            <strong><i class="fas fa-mobile-alt"></i> Airtel Money:</strong> 0733 123 456<br>
+                            <strong>Amount:</strong> KES ${grandTotal.toLocaleString('en-KE')}<br>
+                            <strong>Include your order number in payment description</strong>
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            cartContainer.innerHTML = cartHTML;
+            cartContainer.style.display = 'block';
+            emptyCart.style.display = 'none';
+        }
+        
+        function updateQuantity(index, newQuantity) {
+            if (newQuantity < 1) {
+                removeItem(index);
+                return;
+            }
+            cart[index].quantity = newQuantity;
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
+        }
+        
+        function removeItem(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
+            // Update cart count on index page
+            if (window.opener) {
+                window.opener.updateCartCount();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', displayCart);
+    </script>
+</body>
+</html>
