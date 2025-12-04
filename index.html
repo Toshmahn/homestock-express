@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HomeStock Express</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f0f8ff;
+        }
+        header {
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        #cart {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 10px;
+            border: 2px solid #2563eb;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        #cart-total {
+            font-size: 24px;
+            color: #2563eb;
+            font-weight: bold;
+        }
+        .checkout-btn {
+            background: #10b981;
+            padding: 15px 30px;
+            font-size: 18px;
+            width: 100%;
+        }
+        .checkout-btn:hover {
+            background: #0da271;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🏠 HomeStock Express</h1>
+        <p>Household Items Delivered to Your Door</p>
+    </header>
+
+    <div style="padding: 20px; text-align: center;">
+        <h2>Shop Household Essentials:</h2>
+        
+        <div class="products">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <h3>📦 Paper Towels</h3>
+                <p>Soft and absorbent, 6 rolls</p>
+                <p><strong>$12.99</strong></p>
+                <button onclick="addToCart('Paper Towels', 12.99)">Add to Cart</button>
+            </div>
+            
+            <!-- Product 2 -->
+            <div class="product-card">
+                <h3>🧼 Dish Soap</h3>
+                <p>Lemon scent, 750ml</p>
+                <p><strong>$5.99</strong></p>
+                <button onclick="addToCart('Dish Soap', 5.99)">Add to Cart</button>
+            </div>
+            
+            <!-- Product 3 -->
+            <div class="product-card">
+                <h3>🗑️ Trash Bags</h3>
+                <p>Heavy duty, 30 count</p>
+                <p><strong>$8.99</strong></p>
+                <button onclick="addToCart('Trash Bags', 8.99)">Add to Cart</button>
+            </div>
+        </div>
+        
+        <!-- Cart Section -->
+        <div id="cart">
+            <h2>🛒 Your Shopping Cart</h2>
+            <div id="cart-items">
+                <!-- Cart items will appear here -->
+                <p style="color: #666; text-align: center;">Your cart is empty</p>
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <p>Total: $<span id="cart-total">0.00</span></p>
+                <button class="checkout-btn" onclick="goToCheckout()">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <footer style="text-align: center; padding: 20px; background: #f1f5f9; margin-top: 40px;">
+        <p>© 2024 HomeStock Express | All prices in USD | All sales final</p>
+        <p>📞 Call/Text: [Your Phone Here] | 📧 Email: [Your Email Here]</p>
+    </footer>
+
+    <script>
+        // Shopping cart data
+        let cart = [];
+        let total = 0;
+
+        // Function to add item to cart
+        function addToCart(name, price) {
+            // Add to cart array
+            cart.push({name: name, price: price});
+            total += price;
+            
+            // Update cart display
+            updateCartDisplay();
+            
+            // Show confirmation
+            alert('✅ Added to cart: ' + name + ' - $' + price.toFixed(2));
+        }
+
+        // Function to update cart display
+        function updateCartDisplay() {
+            const cartItemsDiv = document.getElementById('cart-items');
+            const cartTotalSpan = document.getElementById('cart-total');
+            
+            // Clear current display
+            cartItemsDiv.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = '<p style="color: #666; text-align: center;">Your cart is empty</p>';
+            } else {
+                // Add each item to display
+                cart.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'cart-item';
+                    itemDiv.innerHTML = `
+                        <span>${item.name}</span>
+                        <span>$${item.price.toFixed(2)}</span>
+                        <button onclick="removeFromCart(${index})" style="background: #ef4444; padding: 5px 10px; font-size: 12px;">Remove</button>
+                    `;
+                    cartItemsDiv.appendChild(itemDiv);
+                });
+            }
+            
+            // Update total
+            cartTotalSpan.textContent = total.toFixed(2);
+        }
+
+        // Function to remove item from cart
+        function removeFromCart(index) {
+            total -= cart[index].price;
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        // Function to go to checkout
+        function goToCheckout() {
+            if (cart.length === 0) {
+                alert('🛒 Your cart is empty! Add items first.');
+                return;
+            }
+            
+            // Save cart to browser storage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            localStorage.setItem('total', total.toFixed(2));
+            
+            // Go to checkout page
+            window.location.href = 'checkout.html';
+        }
+
+        // Initialize cart display
+        updateCartDisplay();
+    </script>
+</body>
+</html>
